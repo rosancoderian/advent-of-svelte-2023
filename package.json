@@ -1,0 +1,42 @@
+{
+	"name": "advent-svelte-2023",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"lint": "prettier --plugin-search-dir . --check . && eslint .",
+		"format": "prettier --plugin-search-dir . --write ."
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-auto": "^1.0.3",
+		"@sveltejs/kit": "^1.30.3",
+		"@typescript-eslint/eslint-plugin": "^5.62.0",
+		"@typescript-eslint/parser": "^5.62.0",
+		"autoprefixer": "^10.4.16",
+		"eslint": "^8.56.0",
+		"eslint-config-prettier": "^8.10.0",
+		"eslint-plugin-svelte3": "^4.0.0",
+		"postcss": "^8.4.32",
+		"postcss-load-config": "^5.0.2",
+		"prettier": "^2.8.8",
+		"prettier-plugin-svelte": "^2.10.1",
+		"prettier-plugin-tailwindcss": "^0.5.9",
+		"svelte": "5.0.0-next.26",
+		"svelte-check": "^2.10.3",
+		"tailwindcss": "^3.4.0",
+		"tslib": "^2.6.2",
+		"typescript": "^4.9.5",
+		"vite": "^4.5.1"
+	},
+	"type": "module",
+	"dependencies": {
+		"clsx": "^2.0.0",
+		"lucide-svelte": "^0.300.0",
+		"tailwind-merge": "^2.2.0",
+		"tailwind-variants": "^0.1.19"
+	}
+}
