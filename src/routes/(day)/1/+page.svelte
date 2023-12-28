@@ -5,17 +5,20 @@
 	import { Input } from "$lib/components/ui/input"
 	import { EditableText } from "$lib/components/editable-text"
 
-	import { ChevronLeft, ChevronRight, PlusCircle, Trash2 } from "lucide-svelte"
+	import { ChevronLeft, ChevronRight } from "lucide-svelte"
+
+	import { page } from "$app/stores"
+	import { goto } from "$app/navigation"
 
 	const perPage = 10
 
 	let data: { name: string; tally: number }[] = $state([])
-	let page = $state(1)
+	let currPage = $state(Number($page.url.searchParams.get("p")) || 1)
 	let newName = $state("")
 	let newTally = $state(0)
 
-	let totalPage = $derived(data.length / perPage)
-	let filteredData = $derived(data.slice((page - 1) * perPage, page * perPage))
+	let totalPage = $derived(Math.ceil(data.length / perPage))
+	let filteredData = $derived(data.slice((currPage - 1) * perPage, currPage * perPage))
 
 	onMount(async () => {
 		if (!localStorage.getItem("data") || localStorage.getItem("data") === "[]") {
@@ -28,12 +31,17 @@
 		data = JSON.parse(localStorage.getItem("data") || "[]")
 	})
 
+	$effect(() => {
+		$page.url.searchParams.set("p", currPage.toString())
+		goto($page.url.toString(), { noScroll: true, keepFocus: true })
+	})
+
 	function nextPage() {
-		if (page < totalPage) page++
+		if (currPage < totalPage) currPage++
 	}
 
 	function prevPage() {
-		if (page > 1) page--
+		if (currPage > 1) currPage--
 	}
 
 	function tallyStatus(tally: number) {
@@ -47,7 +55,7 @@
 	}
 
 	function no(i: number) {
-		return i + 1 + 10 * (page - 1)
+		return i + 1 + 10 * (currPage - 1)
 	}
 
 	function addRecord() {
@@ -55,13 +63,13 @@
 		newName = ""
 		newTally = 0
 		localStorage.setItem("data", JSON.stringify(data))
-		page = 1
+		currPage = 1
 	}
 
 	function removeRecord(index: number) {
 		return () => {
 			const i = no(index) - 1
-			data = data.toSpliced(i, 1)
+			data.splice(i, 1)
 			localStorage.setItem("data", JSON.stringify(data))
 			if (filteredData.length == 0) prevPage()
 		}
@@ -70,11 +78,10 @@
 	function updateRecord(index: number, key: string) {
 		return (ev: CustomEvent) => {
 			const i = no(index) - 1
-			const record = {
+			data[i] = {
 				...data[i],
 				[key]: ev.detail.value
 			}
-			data = data.toSpliced(i, 1, record)
 			localStorage.setItem("data", JSON.stringify(data))
 		}
 	}
@@ -135,11 +142,11 @@
 		</div>
 	</div>
 	<div class="flex w-full justify-center gap-4 p-4">
-		<Button variant="outline" on:click={prevPage}>
+		<Button variant="outline" size="icon" on:click={prevPage} disabled={currPage <= 1}>
 			<ChevronLeft />
 		</Button>
-		<Input type="number" class="w-[80px]" min="1" max={totalPage} bind:value={page} />
-		<Button variant="outline" on:click={nextPage}>
+		<Input type="number" class="w-[80px]" min="1" max={totalPage} bind:value={currPage} />
+		<Button variant="outline" size="icon" on:click={nextPage} disabled={currPage >= totalPage}>
 			<ChevronRight />
 		</Button>
 	</div>
