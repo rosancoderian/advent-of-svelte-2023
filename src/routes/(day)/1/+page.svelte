@@ -19,6 +19,7 @@
 
 	let totalPage = $derived(Math.ceil(data.length / perPage))
 	let filteredData = $derived(data.slice((currPage - 1) * perPage, currPage * perPage))
+	let isEditable = $derived(!!newName)
 
 	onMount(async () => {
 		if (!localStorage.getItem("data") || localStorage.getItem("data") === "[]") {
@@ -36,12 +37,40 @@
 		goto($page.url.toString(), { noScroll: true, keepFocus: true })
 	})
 
-	function nextPage() {
+	function handleNextPage() {
 		if (currPage < totalPage) currPage++
 	}
 
-	function prevPage() {
+	function handlePrevPage() {
 		if (currPage > 1) currPage--
+	}
+
+	function handleAdd() {
+		data = [{ name: newName, tally: newTally }, ...data]
+		newName = ""
+		newTally = 0
+		localStorage.setItem("data", JSON.stringify(data))
+		currPage = 1
+	}
+
+	function handleRemove(index: number) {
+		return () => {
+			const i = rowNum(index) - 1
+			data.splice(i, 1)
+			localStorage.setItem("data", JSON.stringify(data))
+			if (filteredData.length == 0) handlePrevPage()
+		}
+	}
+
+	function handleUpdate(index: number, key: string) {
+		return (ev: CustomEvent) => {
+			const i = rowNum(index) - 1
+			data[i] = {
+				...data[i],
+				[key]: ev.detail.value
+			}
+			localStorage.setItem("data", JSON.stringify(data))
+		}
 	}
 
 	function tallyStatus(tally: number) {
@@ -54,44 +83,12 @@
 		}
 	}
 
-	function no(i: number) {
+	function rowNum(i: number) {
 		return i + 1 + 10 * (currPage - 1)
-	}
-
-	function addRecord() {
-		data = [{ name: newName, tally: newTally }, ...data]
-		newName = ""
-		newTally = 0
-		localStorage.setItem("data", JSON.stringify(data))
-		currPage = 1
-	}
-
-	function removeRecord(index: number) {
-		return () => {
-			const i = no(index) - 1
-			data.splice(i, 1)
-			localStorage.setItem("data", JSON.stringify(data))
-			if (filteredData.length == 0) prevPage()
-		}
-	}
-
-	function updateRecord(index: number, key: string) {
-		return (ev: CustomEvent) => {
-			const i = no(index) - 1
-			data[i] = {
-				...data[i],
-				[key]: ev.detail.value
-			}
-			localStorage.setItem("data", JSON.stringify(data))
-		}
-	}
-
-	function isEditable() {
-		return !!newName
 	}
 </script>
 
-<div class="mx-auto flex h-[924px] w-[560px] flex-col justify-between">
+<div class="mx-auto flex h-[924px] w-[1024px] flex-col justify-between">
 	<div>
 		<div class="flex justify-end gap-2 py-4">
 			<Input name="name" type="text" placeholder="Name" bind:value={newName} />
@@ -102,7 +99,7 @@
 				class="w-[100px]"
 				bind:value={newTally}
 			/>
-			<Button on:click={addRecord} disabled={!isEditable()}>
+			<Button on:click={handleAdd} disabled={!isEditable}>
 				<!-- <PlusCircle class="mr-2" /> -->
 				Add
 			</Button>
@@ -121,16 +118,16 @@
 				<Table.Body>
 					{#each filteredData as { name, tally }, i}
 						<Table.Row>
-							<Table.Cell>{no(i)}</Table.Cell>
+							<Table.Cell>{rowNum(i)}</Table.Cell>
 							<Table.Cell>
-								<EditableText value={name} on:change={updateRecord(i, "name")} />
+								<EditableText value={name} on:change={handleUpdate(i, "name")} />
 							</Table.Cell>
 							<Table.Cell class="text-right">
-								<EditableText value={tally} on:change={updateRecord(i, "tally")} />
+								<EditableText value={tally} on:change={handleUpdate(i, "tally")} />
 							</Table.Cell>
 							<Table.Cell>{tallyStatus(tally)}</Table.Cell>
 							<Table.Cell class="float-end">
-								<Button variant="destructive" on:click={removeRecord(i)}>
+								<Button variant="destructive" on:click={handleRemove(i)}>
 									<!-- <Trash2 class="mr-2" /> -->
 									Remove
 								</Button>
@@ -142,11 +139,16 @@
 		</div>
 	</div>
 	<div class="flex w-full justify-center gap-4 p-4">
-		<Button variant="outline" size="icon" on:click={prevPage} disabled={currPage <= 1}>
+		<Button variant="outline" size="icon" on:click={handlePrevPage} disabled={currPage <= 1}>
 			<ChevronLeft />
 		</Button>
 		<Input type="number" class="w-[80px]" min="1" max={totalPage} bind:value={currPage} />
-		<Button variant="outline" size="icon" on:click={nextPage} disabled={currPage >= totalPage}>
+		<Button
+			variant="outline"
+			size="icon"
+			on:click={handleNextPage}
+			disabled={currPage >= totalPage}
+		>
 			<ChevronRight />
 		</Button>
 	</div>
