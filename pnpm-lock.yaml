@@ -11,9 +11,6 @@ dependencies:
   clsx:
     specifier: ^2.0.0
     version: 2.0.0
-  lucide-svelte:
-    specifier: ^0.300.0
-    version: 0.300.0(svelte@5.0.0-next.26)
   tailwind-merge:
     specifier: ^2.2.0
     version: 2.2.0
@@ -1828,14 +1825,6 @@ packages:
     dependencies:
       yallist: 4.0.0
     dev: true
-
-  /lucide-svelte@0.300.0(svelte@5.0.0-next.26):
-    resolution: {integrity: sha512-oRWQR+ESh1zedKipUir8aXxbPeThrJ32OYJzcVpTMA2fj9mZUhG9Gn9MDFSLapKpzBF63XvA91eaxqeAhQ0icQ==}
-    peerDependencies:
-      svelte: '>=3 <5'
-    dependencies:
-      svelte: 5.0.0-next.26
-    dev: false
 
   /magic-string@0.30.5:
     resolution: {integrity: sha512-7xlpfBaQaP/T6Vh8MO/EqXSW5En6INHEvEXQiuff7Gku0PWjU3uf6w/j9o7O+SpB5fOAkrI5HeoNgwjEO0pFsA==}

@@ -5,7 +5,7 @@
 	import { Input } from "$lib/components/ui/input"
 	import { EditableText } from "$lib/components/editable-text"
 
-	import { ChevronLeft, ChevronRight } from "lucide-svelte"
+	import { CaretLeft, CaretRight, Trash, PlusCircle } from "phosphor-svelte"
 
 	import { page } from "$app/stores"
 	import { goto } from "$app/navigation"
@@ -100,7 +100,7 @@
 				bind:value={newTally}
 			/>
 			<Button on:click={handleAdd} disabled={!isEditable}>
-				<!-- <PlusCircle class="mr-2" /> -->
+				<PlusCircle class="mr-2" />
 				Add
 			</Button>
 		</div>
@@ -128,8 +128,7 @@
 							<Table.Cell>{tallyStatus(tally)}</Table.Cell>
 							<Table.Cell class="float-end">
 								<Button variant="destructive" on:click={handleRemove(i)}>
-									<!-- <Trash2 class="mr-2" /> -->
-									Remove
+									<Trash />
 								</Button>
 							</Table.Cell>
 						</Table.Row>
@@ -140,7 +139,7 @@
 	</div>
 	<div class="flex w-full justify-center gap-4 p-4">
 		<Button variant="outline" size="icon" on:click={handlePrevPage} disabled={currPage <= 1}>
-			<ChevronLeft />
+			<CaretLeft />
 		</Button>
 		<Input type="number" class="w-[80px]" min="1" max={totalPage} bind:value={currPage} />
 		<Button
@@ -149,7 +148,7 @@
 			on:click={handleNextPage}
 			disabled={currPage >= totalPage}
 		>
-			<ChevronRight />
+			<CaretRight />
 		</Button>
 	</div>
 </div>

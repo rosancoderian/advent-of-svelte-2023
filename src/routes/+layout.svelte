@@ -1,7 +1,10 @@
 <script>
+	import { IconContext } from "phosphor-svelte"
 	import "../app.pcss"
 </script>
 
-<div class="container mx-auto py-6">
-	<slot />
-</div>
+<IconContext values={{ size: 24 }}>
+	<div class="container mx-auto py-6">
+		<slot />
+	</div>
+</IconContext>
