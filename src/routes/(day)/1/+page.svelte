@@ -88,22 +88,16 @@
 	}
 </script>
 
-<div class="mx-auto flex h-[924px] w-[1024px] flex-col justify-between">
-	<div>
-		<div class="flex justify-end gap-2 py-4">
-			<Input name="name" type="text" placeholder="Name" bind:value={newName} />
-			<Input
-				name="tally"
-				type="number"
-				placeholder="Tally"
-				class="w-[100px]"
-				bind:value={newTally}
-			/>
-			<Button on:click={handleAdd} disabled={!isEditable}>
-				<PlusCircle class="mr-2" />
-				Add
-			</Button>
-		</div>
+<div class="flex flex-col gap-4 h-[924px]">
+	<div class="flex justify-end gap-2">
+		<Input name="name" type="text" placeholder="Name" bind:value={newName} />
+		<Input name="tally" type="number" placeholder="Tally" class="w-[100px]" bind:value={newTally} />
+		<Button on:click={handleAdd} disabled={!isEditable}>
+			<PlusCircle class="mr-2" />
+			Add
+		</Button>
+	</div>
+	<div class="flex flex-col justify-between h-full">
 		<div class="rounded-md border">
 			<Table.Root>
 				<Table.Header>
@@ -136,19 +130,14 @@
 				</Table.Body>
 			</Table.Root>
 		</div>
-	</div>
-	<div class="flex w-full justify-center gap-4 p-4">
-		<Button variant="outline" size="icon" on:click={handlePrevPage} disabled={currPage <= 1}>
-			<CaretLeft />
-		</Button>
-		<Input type="number" class="w-[80px]" min="1" max={totalPage} bind:value={currPage} />
-		<Button
-			variant="outline"
-			size="icon"
-			on:click={handleNextPage}
-			disabled={currPage >= totalPage}
-		>
-			<CaretRight />
-		</Button>
+		<div class="flex w-full justify-center gap-4 p-4">
+			<Button variant="outline" size="icon" on:click={handlePrevPage} disabled={currPage <= 1}>
+				<CaretLeft />
+			</Button>
+			<Input type="number" class="w-[80px]" min="1" max={totalPage} bind:value={currPage} />
+			<Button variant="outline" size="icon" on:click={handleNextPage} disabled={currPage >= totalPage}>
+				<CaretRight />
+			</Button>
+		</div>
 	</div>
 </div>

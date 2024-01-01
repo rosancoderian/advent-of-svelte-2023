@@ -3,8 +3,11 @@
 	import "../app.pcss"
 </script>
 
-<IconContext values={{ size: 24 }}>
-	<div class="container mx-auto py-6">
+<nav class="sticky top-0 z-50 w-full border-b bg-background/95 p-4 shadow-sm">
+	<a href="/"> Advent of Svelte 2023 </a>
+</nav>
+<div class="container mx-auto">
+	<IconContext values={{ size: 24 }}>
 		<slot />
-	</div>
-</IconContext>
+	</IconContext>
+</div>
