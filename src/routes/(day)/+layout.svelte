@@ -2,15 +2,14 @@
 	import * as Select from "$lib/components/ui/select"
 	import challanges from "$lib/challanges"
 	import { page } from "$app/stores"
-	import { goto } from "$app/navigation"
-	import { type Selected } from "bits-ui"
 	import { Button } from "$lib/components/ui/button"
 
 	let title = $derived(challanges.find((c) => c.path === $page.url.pathname)?.label)
 </script>
 
 <div class="flex">
-	<div class="p-4 w-[260px]">
+	<div class="py-4 w-[260px]">
+		<p class="text-lg font-semibold">Challanges:</p>
 		{#each challanges as c}
 			<div>
 				<Button variant="link" href={c.path}>
@@ -23,7 +22,8 @@
 			</div>
 		{/each}
 	</div>
-	<div class="w-full gap-2 border-l p-4">
+	<div class="w-full p-4">
+		<p class="text-center text-lg font-semibold pb-4">{title}</p>
 		<slot />
 	</div>
 </div>
