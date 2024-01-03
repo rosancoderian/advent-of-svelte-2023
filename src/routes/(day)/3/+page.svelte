@@ -7,7 +7,8 @@
 
 	let presents: Present[] = $state([])
 	let cargo: Present[] = $state([])
-	let draggedData: Present | null = $state(null)
+	let draggedPresent: Present | null = $state(null)
+  let draggedPresentIndex: number | null = $state(null)
 
 	onMount(async () => {
 		if (!localStorage.getItem("presents") || localStorage.getItem("presents") === "[]") {
@@ -19,6 +20,32 @@
 		}
 		presents = JSON.parse(localStorage.getItem("presents") || "[]")
 	})
+
+	function handleDragPresent(p: Present, i: number) {
+		return (ev: DragEvent) => {
+			console.log("drag", ev)
+			draggedPresent = p
+      draggedPresentIndex = i
+		}
+	}
+
+	function handleOverCargo(ev: DragEvent) {
+		console.log("over", ev)
+		ev.preventDefault()
+		if (ev.dataTransfer) {
+			ev.dataTransfer.dropEffect = "move"
+		}
+	}
+
+	function handleDropToCargo(ev: DragEvent) {
+		console.log("drop", ev)
+		if (draggedPresent && draggedPresentIndex !== null) {
+			cargo.push(draggedPresent)
+      presents.splice(draggedPresentIndex, 1)
+		}
+		draggedPresent = null
+    draggedPresentIndex = null
+	}
 </script>
 
 <div class="flex flex-col gap-4">
@@ -32,10 +59,7 @@
 					role="button"
 					tabindex={i}
 					draggable="true"
-					on:dragstart={(ev) => {
-						draggedData = p
-						console.log(ev)
-					}}
+					on:dragstart={handleDragPresent(p, i)}
 				>
 					<p>{p.name}</p>
 					<p>Weight: {p.weight}</p>
@@ -46,19 +70,8 @@
 		<div
 			class="flex h-[640px] w-1/2 flex-wrap place-content-start justify-items-center gap-2 overflow-y-auto rounded-md border p-2"
 			role="list"
-			on:dragover={(ev) => {
-				ev.preventDefault()
-				if (ev.dataTransfer) {
-					ev.dataTransfer.dropEffect = "move"
-				}
-			}}
-			on:drop={(ev) => {
-				console.log("drop", ev)
-				if (draggedData) {
-					cargo.push(draggedData)
-				}
-				draggedData = null
-			}}
+			on:dragover={handleOverCargo}
+			on:drop={handleDropToCargo}
 		>
 			{#each cargo as p, i}
 				<div
