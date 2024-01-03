@@ -7,8 +7,8 @@ export default [
 		path: "/2",
 		label: "Day 2 - Merry Munch-o-Meter"
 	},
-	// {
-	// 	path: "/3",
-	// 	label: "Day 3 - Jingle Bell Balancer"
-	// }
+	{
+		path: "/3",
+		label: "Day 3 - Jingle Bell Balancer"
+	}
 ]

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import * as Select from "$lib/components/ui/select"
 	import challanges from "$lib/challanges"
 	import { page } from "$app/stores"
 	import { Button } from "$lib/components/ui/button"
