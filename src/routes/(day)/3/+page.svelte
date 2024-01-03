@@ -5,46 +5,79 @@
 
 	type Present = { name: string; weight: number }
 
-	let presents: Present[] = $state([])
+	let warehouse: Present[] = $state([])
 	let cargo: Present[] = $state([])
+	let draggedFrom: "warehouse" | "cargo" | null = $state(null)
 	let draggedPresent: Present | null = $state(null)
-  let draggedPresentIndex: number | null = $state(null)
+	let draggedPresentIndex: number | null = $state(null)
 
 	onMount(async () => {
-		if (!localStorage.getItem("presents") || localStorage.getItem("presents") === "[]") {
+		if (!localStorage.getItem("warehouse") || localStorage.getItem("warehouse") === "[]") {
 			await fetch("https://advent.sveltesociety.dev/data/2023/day-three.json")
 				.then((res) => res.json())
 				.then((data) => {
-					localStorage.setItem("presents", JSON.stringify(data))
+					localStorage.setItem("warehouse", JSON.stringify(data))
 				})
 		}
-		presents = JSON.parse(localStorage.getItem("presents") || "[]")
+		warehouse = JSON.parse(localStorage.getItem("warehouse") || "[]")
+    warehouse.sort((a, b) => a.weight - b.weight)
 	})
 
-	function handleDragPresent(p: Present, i: number) {
+	function handleDragFromWarehouse(p: Present, i: number) {
 		return (ev: DragEvent) => {
 			console.log("drag", ev)
 			draggedPresent = p
-      draggedPresentIndex = i
+			draggedPresentIndex = i
+			draggedFrom = "warehouse"
 		}
 	}
 
-	function handleOverCargo(ev: DragEvent) {
+	function handleDragFromCargo(p: Present, i: number) {
+		return (ev: DragEvent) => {
+			console.log("drag", ev)
+			draggedPresent = p
+			draggedPresentIndex = i
+			draggedFrom = "cargo"
+		}
+	}
+
+	function handleOverToCargo(ev: DragEvent) {
 		console.log("over", ev)
 		ev.preventDefault()
-		if (ev.dataTransfer) {
+		if (ev.dataTransfer && draggedFrom == "warehouse") {
 			ev.dataTransfer.dropEffect = "move"
 		}
 	}
 
-	function handleDropToCargo(ev: DragEvent) {
-		console.log("drop", ev)
-		if (draggedPresent && draggedPresentIndex !== null) {
-			cargo.push(draggedPresent)
-      presents.splice(draggedPresentIndex, 1)
+	function handleOverToWarehouse(ev: DragEvent) {
+		console.log("over", ev)
+		ev.preventDefault()
+		if (ev.dataTransfer && draggedFrom == "cargo") {
+			ev.dataTransfer.dropEffect = "move"
 		}
+	}
+
+	function handleDrop(draggedFrom: "cargo" | "warehouse") {
+		return (ev: DragEvent) => {
+			if (draggedPresent && draggedPresentIndex !== null) {
+				if (draggedFrom == "cargo") {
+					warehouse.push(draggedPresent)
+					cargo.splice(draggedPresentIndex, 1)
+				} else if (draggedFrom == "warehouse") {
+					cargo.push(draggedPresent)
+					warehouse.splice(draggedPresentIndex, 1)
+				}
+			}
+			resetDragData()
+      warehouse.sort((a, b) => a.weight - b.weight)
+      cargo.sort((a, b) => a.weight - b.weight)
+		}
+	}
+
+	function resetDragData() {
 		draggedPresent = null
-    draggedPresentIndex = null
+		draggedPresentIndex = null
+		draggedFrom = null
 	}
 </script>
 
@@ -52,14 +85,17 @@
 	<div class="flex w-full gap-2">
 		<div
 			class="flex h-[640px] w-1/2 flex-wrap place-content-start justify-items-center gap-2 overflow-y-auto rounded-md border p-2"
+			role="list"
+			on:dragover={handleOverToWarehouse}
+			on:drop={handleDrop("cargo")}
 		>
-			{#each presents as p, i}
+			{#each warehouse as p, i}
 				<div
 					class="h-[66px] min-w-[100px] select-none rounded-md border bg-white p-2 hover:cursor-move"
 					role="button"
 					tabindex={i}
 					draggable="true"
-					on:dragstart={handleDragPresent(p, i)}
+					on:dragstart={handleDragFromWarehouse(p, i)}
 				>
 					<p>{p.name}</p>
 					<p>Weight: {p.weight}</p>
@@ -70,12 +106,16 @@
 		<div
 			class="flex h-[640px] w-1/2 flex-wrap place-content-start justify-items-center gap-2 overflow-y-auto rounded-md border p-2"
 			role="list"
-			on:dragover={handleOverCargo}
-			on:drop={handleDropToCargo}
+			on:dragover={handleOverToCargo}
+			on:drop={handleDrop("warehouse")}
 		>
 			{#each cargo as p, i}
 				<div
 					class="h-[66px] min-w-[100px] select-none rounded-md border bg-white p-2 hover:cursor-move"
+					role="button"
+					tabindex={i}
+					draggable="true"
+					on:dragstart={handleDragFromCargo(p, i)}
 				>
 					<p>{p.name}</p>
 					<p>Weight: {p.weight}</p>
