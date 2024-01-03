@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { onMount } from "svelte"
-	import { Progress } from "$lib/components/ui/progress"
-	import * as Card from "$lib/components/ui/card"
 
 	type Present = { name: string; weight: number }
 
@@ -10,6 +8,8 @@
 	let draggedFrom: "warehouse" | "cargo" | null = $state(null)
 	let draggedPresent: Present | null = $state(null)
 	let draggedPresentIndex: number | null = $state(null)
+
+	$effect(() => console.log("draggedPresent", draggedPresent))
 
 	onMount(async () => {
 		if (!localStorage.getItem("warehouse") || localStorage.getItem("warehouse") === "[]") {
@@ -20,22 +20,15 @@
 				})
 		}
 		warehouse = JSON.parse(localStorage.getItem("warehouse") || "[]")
-    warehouse.sort((a, b) => a.weight - b.weight)
+		warehouse.sort((a, b) => a.weight - b.weight)
 	})
 
-	function handleDragFromWarehouse(p: Present, i: number) {
+	function handleDrag(from: "warehouse" | "cargo", p: Present, i: number) {
 		return (ev: DragEvent) => {
+			console.log(p, i)
 			draggedPresent = p
 			draggedPresentIndex = i
-			draggedFrom = "warehouse"
-		}
-	}
-
-	function handleDragFromCargo(p: Present, i: number) {
-		return (ev: DragEvent) => {
-			draggedPresent = p
-			draggedPresentIndex = i
-			draggedFrom = "cargo"
+			draggedFrom = from
 		}
 	}
 
@@ -65,8 +58,8 @@
 				}
 			}
 			resetDragData()
-      warehouse.sort((a, b) => a.weight - b.weight)
-      cargo.sort((a, b) => a.weight - b.weight)
+			warehouse.sort((a, b) => a.weight - b.weight)
+			cargo.sort((a, b) => a.weight - b.weight)
 		}
 	}
 
@@ -91,7 +84,10 @@
 					role="button"
 					tabindex={i}
 					draggable="true"
-					on:dragstart={handleDragFromWarehouse(p, i)}
+					on:dragstart={(ev) => {
+						// why?
+						handleDrag("warehouse", p, i)(ev)
+					}}
 				>
 					<p>{p.name}</p>
 					<p>Weight: {p.weight}</p>
@@ -111,7 +107,10 @@
 					role="button"
 					tabindex={i}
 					draggable="true"
-					on:dragstart={handleDragFromCargo(p, i)}
+					on:dragstart={(ev) => {
+						// why?
+						handleDrag("cargo", p, i)(ev)
+					}}
 				>
 					<p>{p.name}</p>
 					<p>Weight: {p.weight}</p>
