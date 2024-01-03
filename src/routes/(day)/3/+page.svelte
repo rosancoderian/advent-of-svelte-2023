@@ -25,7 +25,6 @@
 
 	function handleDragFromWarehouse(p: Present, i: number) {
 		return (ev: DragEvent) => {
-			console.log("drag", ev)
 			draggedPresent = p
 			draggedPresentIndex = i
 			draggedFrom = "warehouse"
@@ -34,7 +33,6 @@
 
 	function handleDragFromCargo(p: Present, i: number) {
 		return (ev: DragEvent) => {
-			console.log("drag", ev)
 			draggedPresent = p
 			draggedPresentIndex = i
 			draggedFrom = "cargo"
@@ -42,7 +40,6 @@
 	}
 
 	function handleOverToCargo(ev: DragEvent) {
-		console.log("over", ev)
 		ev.preventDefault()
 		if (ev.dataTransfer && draggedFrom == "warehouse") {
 			ev.dataTransfer.dropEffect = "move"
@@ -50,20 +47,19 @@
 	}
 
 	function handleOverToWarehouse(ev: DragEvent) {
-		console.log("over", ev)
 		ev.preventDefault()
 		if (ev.dataTransfer && draggedFrom == "cargo") {
 			ev.dataTransfer.dropEffect = "move"
 		}
 	}
 
-	function handleDrop(draggedFrom: "cargo" | "warehouse") {
+	function handleDrop(draggedTo: "cargo" | "warehouse") {
 		return (ev: DragEvent) => {
 			if (draggedPresent && draggedPresentIndex !== null) {
-				if (draggedFrom == "cargo") {
+				if (draggedFrom == "cargo" && draggedTo == "warehouse") {
 					warehouse.push(draggedPresent)
 					cargo.splice(draggedPresentIndex, 1)
-				} else if (draggedFrom == "warehouse") {
+				} else if (draggedFrom == "warehouse" && draggedTo == "cargo") {
 					cargo.push(draggedPresent)
 					warehouse.splice(draggedPresentIndex, 1)
 				}
@@ -87,7 +83,7 @@
 			class="flex h-[640px] w-1/2 flex-wrap place-content-start justify-items-center gap-2 overflow-y-auto rounded-md border p-2"
 			role="list"
 			on:dragover={handleOverToWarehouse}
-			on:drop={handleDrop("cargo")}
+			on:drop={handleDrop("warehouse")}
 		>
 			{#each warehouse as p, i}
 				<div
@@ -107,7 +103,7 @@
 			class="flex h-[640px] w-1/2 flex-wrap place-content-start justify-items-center gap-2 overflow-y-auto rounded-md border p-2"
 			role="list"
 			on:dragover={handleOverToCargo}
-			on:drop={handleDrop("warehouse")}
+			on:drop={handleDrop("cargo")}
 		>
 			{#each cargo as p, i}
 				<div
