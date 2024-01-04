@@ -11,8 +11,6 @@
 	let draggedPresentIndex: number | null = $state(null)
 	let totalLoad = $derived(Number(cargo.reduce((acc, p) => acc + p.weight, 0).toFixed(2)))
 
-	$effect(() => console.log("draggedPresent", draggedPresent))
-
 	onMount(async () => {
 		if (!localStorage.getItem("warehouse") || localStorage.getItem("warehouse") === "[]") {
 			await fetch("https://advent.sveltesociety.dev/data/2023/day-three.json")
@@ -27,7 +25,6 @@
 
 	function handleDrag(from: "warehouse" | "cargo", p: Present, i: number) {
 		return (ev: DragEvent) => {
-			console.log(p, i)
 			draggedPresent = p
 			draggedPresentIndex = i
 			draggedFrom = from
