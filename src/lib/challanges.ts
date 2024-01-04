@@ -10,5 +10,9 @@ export default [
 	{
 		path: "/3",
 		label: "Day 3 - Jingle Bell Balancer"
+	},
+	{
+		path: "/4",
+		label: "Day 4 - Heart of Christmas"
 	}
 ]
