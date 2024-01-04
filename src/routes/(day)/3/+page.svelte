@@ -31,17 +31,16 @@
 		}
 	}
 
-	function handleOverToCargo(ev: DragEvent) {
-		ev.preventDefault()
-		if (ev.dataTransfer && draggedFrom == "warehouse") {
-			ev.dataTransfer.dropEffect = "move"
-		}
-	}
-
-	function handleOverToWarehouse(ev: DragEvent) {
-		ev.preventDefault()
-		if (ev.dataTransfer && draggedFrom == "cargo") {
-			ev.dataTransfer.dropEffect = "move"
+	function handleOver(draggedTo: "cargo" | "warehouse") {
+		return (ev: DragEvent) => {
+			ev.preventDefault()
+			if (
+				ev.dataTransfer &&
+				((draggedFrom == "warehouse" && draggedTo == "cargo") ||
+					(draggedFrom == "cargo" && draggedTo == "warehouse"))
+			) {
+				ev.dataTransfer.dropEffect = "move"
+			}
 		}
 	}
 
@@ -82,7 +81,7 @@
 		<div
 			class="flex h-[640px] w-1/2 flex-wrap place-content-start justify-items-center gap-2 overflow-y-auto rounded-md border p-2"
 			role="list"
-			on:dragover={handleOverToWarehouse}
+			on:dragover={handleOver("warehouse")}
 			on:drop={handleDrop("warehouse")}
 		>
 			{#each warehouse as p, i}
@@ -108,7 +107,7 @@
 			<div
 				class="flex h-full w-full flex-wrap place-content-start justify-items-center gap-2 overflow-y-auto rounded-md border p-2"
 				role="list"
-				on:dragover={handleOverToCargo}
+				on:dragover={handleOver("cargo")}
 				on:drop={handleDrop("cargo")}
 			>
 				{#each cargo as p, i}
