@@ -14,5 +14,9 @@ export default [
 	{
 		path: "/4",
 		label: "Day 4 - Heart of Christmas"
+	},
+	{
+		path: "/5",
+		label: "Day 5 - Present Progress"
 	}
 ]
