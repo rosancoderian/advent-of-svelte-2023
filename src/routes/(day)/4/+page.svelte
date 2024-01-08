@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { Heartbeat } from "phosphor-svelte"
 	import { onMount } from "svelte"
-	import { page } from "$app/stores"
 	import { tweened } from "svelte/motion"
 	import { cubicOut } from "svelte/easing"
 
-	let heartRate = $state($page.data.heartRate)
+	const { data } = $props()
+
+	let heartRate = $state(data.heartRate)
 
 	let heartSize = tweened(1, {
 		duration: 500,
