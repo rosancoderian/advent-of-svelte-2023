@@ -54,9 +54,9 @@
 	}
 </script>
 
-<div class="flex flex-wrap gap-4">
+<div class="grid grid-cols-4 gap-4">
 	{#each taskSummaryByElf as { elf, totalTasks, totalCreatedToys, totalWrappedPresents, avgMinutes }}
-		<Card.Root class="w-[300px]">
+		<Card.Root>
 			<Card.Header>
 				<Card.Title>{elf}</Card.Title>
 			</Card.Header>
